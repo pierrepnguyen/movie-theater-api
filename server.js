@@ -9,7 +9,7 @@ app.use(express.json());
 app.use("/users", usersRouter);
 app.use("/shows", showsRouter);
 
-const port = 3000;
+const port = 3001;
 
 app.listen(port, () => {
     seed();

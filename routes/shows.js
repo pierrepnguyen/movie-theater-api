@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Show } = require("../models/index");
+const { check, validationResult } = require("express-validator");
 
 
 router.route("/").get(async (req, res) => {

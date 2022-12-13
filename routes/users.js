@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const { User, Show } = require("../models/index");
-const { check, validationResult } = require("express-validator");
 
 router.route("/").get(async (req, res) => {
   const users = await User.findAll();
@@ -27,7 +26,7 @@ router.get("/:id/shows", async (req, res) => {
   }
 });
 
-// Adds show to user and sets it to watched
+// Adds show to user
 router.put("/:id/shows/:showId", async (req, res) => {
   const user = await User.findByPk(req.params.id);
 
@@ -41,7 +40,6 @@ router.put("/:id/shows/:showId", async (req, res) => {
         `Show with the id of: ${req.params.showId} has been set to 'watched' for user with id: ${req.params.id}`
       );
     } else {
-      //TODO Maybe change this to be able to add shows to the db
       res.send(
         `Show with the id: ${req.params.showId} does not exist in database.`
       );

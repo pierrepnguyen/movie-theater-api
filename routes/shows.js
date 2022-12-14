@@ -14,50 +14,57 @@ router
   .get(async (req, res) => {
     const show = await Show.findByPk(req.params.id);
 
-    if (show instanceof Show) {
+    if (show) {
       res.json(show);
     } else {
-      res.send(`Show with the id: ${req.params.id} was not found!`);
+      res.send(`Show with the id: ${req.params.id} was not found.`);
     }
   })
   .delete(async (req, res) => {
     const show = await Show.findByPk(req.params.id);
 
-    if (show instanceof Show) {
+    if (show) {
       await show.destroy();
-      res.send(`Show with the id: ${req.params.id} was deleted`);
+      res.send(`Show with the id: ${req.params.id} was deleted.`);
     } else {
-      res.send(`Show with the id: ${req.params.id} was not found!`);
+      res.send(`Show with the id: ${req.params.id} was not found.`);
     }
   });
 
 router.put("/:id/watched", async (req, res) => {
   const show = await Show.findByPk(req.params.id);
 
-  if (show instanceof Show) {
+  if (show) {
     show.status = "watched";
     await show.save();
-    res.send(`Show with the id: ${req.params.id} was successfully updated!`);
+    res.send(`Show with the id: ${req.params.id} was successfully updated.`);
   } else {
-    res.send(`Show with the id: ${req.params.id} was not found!`);
+    res.send(`Show with the id: ${req.params.id} was not found.`);
   }
 });
 
-router.put("/:id/updates", async (req, res) => {
-  const show = await Show.findByPk(req.params.id);
+router.put("/:id/watched", [
+  check("rating").not().isEmpty().trim()]
+, async (req, res) => {
 
-  if (show instanceof Show) {
-    if (show.status == "on-going") {
-      show.status = "canceled";
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+  res.json({error: errors.array()})
+  } else {
+  const showToUpdate = await Show.findByPk(req.params.id);
+    if(showToUpdate.userId === null) {
+      res.json("show not yet watched")
     } else {
-      show.status = "on-going";
+    
+    
+    const updatedShow = await showToUpdate.update({
+      rating: req.body.rating
+    })
+    res.json(updatedShow)
     }
-    await show.save();
-    res.send({ updatedShow: show });
-  } else {
-    res.send(`Show with the id: ${req.params.id} was not found!`);
   }
-});
+  
+})
 
 router.route("/genres/:genre").get(async (req, res) => {
   const showsInGenre = await Show.findAll({

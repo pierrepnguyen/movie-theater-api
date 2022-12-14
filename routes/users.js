@@ -9,17 +9,17 @@ router.route("/").get(async (req, res) => {
 
 router.route("/:id").get(async (req, res) => {
   const user = await User.findByPk(req.params.id);
-  if (user instanceof User) {
+  if (user) {
     res.json(user);
   } else {
-    res.send(`User with the id: ${req.params.id} was not found!`);
+    res.send(`User with the id: ${req.params.id} was not found.`);
   }
 });
 
 router.get("/:id/shows", async (req, res) => {
   const user = await User.findByPk(req.params.id, { include: Show });
 
-  if (user instanceof User) {
+  if (user) {
     res.json(user);
   } else {
     res.send(`User with the id: ${req.params.id} was not found.`);
@@ -29,15 +29,14 @@ router.get("/:id/shows", async (req, res) => {
 // Adds show to user
 router.put("/:id/shows/:showId", async (req, res) => {
   const user = await User.findByPk(req.params.id);
+  const show = await Show.findByPk(req.params.showId);
 
-  if (user instanceof User) {
-    const show = await Show.findByPk(req.params.showId);
-
-    if (show instanceof Show) {
+  if (user) {
+    if (show) {
       await user.addShow(show);
 
       res.send(
-        `Show with the id of: ${req.params.showId} has been set to 'watched' for user with id: ${req.params.id}`
+        `Show with the id of: ${req.params.showId} has been set to 'watched' for user with id: ${req.params.id}.`
       );
     } else {
       res.send(
@@ -45,7 +44,7 @@ router.put("/:id/shows/:showId", async (req, res) => {
       );
     }
   } else {
-    res.send(`User with the id: ${req.params.id} was not found!`);
+    res.send(`User with the id: ${req.params.id} was not found.`);
   }
 });
 
